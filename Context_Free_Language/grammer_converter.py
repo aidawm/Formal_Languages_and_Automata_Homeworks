@@ -68,13 +68,75 @@ def useless_productions(grammer):
     useless_variables = [v for v in grammer["P"].keys() if v not in old_v]
     delete_uselesss_variables(grammer,useless_variables)
 
+def unit_productions(grammer):
+    pass
+
+def landa_productions(grammer):
+    old_null = list()
+    new_null = list()
+    variables = grammer["V"]
+
+    for v in grammer["P"].keys():
+        p_v = grammer["P"][v]
+        for i in p_v:
+            if i == "": 
+                new_null.append(v)
+    while not check_identical_lists(old_null,new_null):
+        old_null = new_null
+        for v in grammer["P"].keys():
+            p_v = grammer["P"][v]
+            for s in p_v:
+                if all(ch in old_null for ch in s):
+                    if not v in new_null:
+                        new_null.append(v)
+
+    null_variables = new_null
+    
+    new_p = dict()
+    for v in grammer["P"].keys():
+        new_p[v]= list()
+        p_v = grammer["P"][v]
+
+        for i in p_v:
+            if not validate_string(i,null_variables):
+                new_p[v].append(i)
+            else:
+                null_variable_indexes=list()
+                for index,s in enumerate(i):
+                    if s in null_variables: 
+                        null_variable_indexes.append(index)
+
+                strings = list()
+                for j in null_variable_indexes:
+                    if len(strings) == 0 :
+                        strg = i 
+                        strings.append(strg)
+                    
+                    strings= strings + strings
+
+                    for k in range(int(len(strings)/2),len(strings),1):
+                        strings[k]=str(strings[k]).replace(strings[k][j]," ")
+
+
+                for j in range(len(strings)):
+                    strings[j]= strings[j].replace(" ","")
+
+                new_p[v] = new_p[v] + strings
+
+        new_p[v] = list(filter(("").__ne__, new_p[v])) 
+    grammer["P"] = new_p
+    grammer["V"] = grammer["P"].keys()
+    
+
+
+
 
 f = open("context_free_grammers.json")
 grammer_list = json.load(f)
 
-grammer = grammer_list["1"]
-useless_productions(grammer)
-
+grammer = grammer_list["3"]
+# useless_productions(grammer)
+landa_productions(grammer)
 print(grammer["P"])
 # for i in range(1,len(grammer_list)+1,1):
 #     grammer = grammer_list[str(i)]
