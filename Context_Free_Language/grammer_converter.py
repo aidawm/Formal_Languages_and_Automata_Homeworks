@@ -68,8 +68,6 @@ def useless_productions(grammer):
     useless_variables = [v for v in grammer["P"].keys() if v not in old_v]
     delete_uselesss_variables(grammer,useless_variables)
 
-def unit_productions(grammer):
-    pass
 
 def landa_productions(grammer):
     old_null = list()
@@ -127,6 +125,37 @@ def landa_productions(grammer):
     grammer["P"] = new_p
     grammer["V"] = grammer["P"].keys()
     
+def find_unit_productions(items,variable_list):
+    res= [i for i in items if i in variable_list]
+    
+    return set(res)
+
+
+
+def unit_productions(grammer):
+    new_p = dict()
+    for v in grammer["P"].keys():
+        expanded_unit_list = set()
+        new_p[v] = list()
+        for i in grammer["P"][v]:
+            new_p[v].append(i)
+            if i in grammer["V"]:
+                new_p[v] = new_p[v] + grammer["P"][i]
+                expanded_unit_list.add(i)
+                unit_list = find_unit_productions(new_p[v],grammer["V"])
+                while not check_identical_lists(expanded_unit_list,unit_list):
+                    for u in unit_list:
+                        if not u in expanded_unit_list:
+                            new_p[v] = new_p[v] + grammer["P"][u]
+                            expanded_unit_list.add(u)
+                    unit_list = find_unit_productions(new_p[v],grammer["V"])    
+        
+        new_p[v] = [j for j in set(new_p[v]) if not j in grammer["V"]]
+
+    grammer["P"] = new_p
+    grammer["V"] = grammer["P"].keys()
+            
+
 
 
 
@@ -134,11 +163,15 @@ def landa_productions(grammer):
 f = open("context_free_grammers.json")
 grammer_list = json.load(f)
 
-grammer = grammer_list["3"]
+grammer = grammer_list["2"]
 # useless_productions(grammer)
-landa_productions(grammer)
+# landa_productions(grammer)
+unit_productions(grammer)
 print(grammer["P"])
 # for i in range(1,len(grammer_list)+1,1):
 #     grammer = grammer_list[str(i)]
     # print(grammer)
+
+
+    
     
