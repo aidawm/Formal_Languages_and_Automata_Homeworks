@@ -166,13 +166,16 @@ if __name__ == "__main__":
     f = open("context_free_grammers.json")
     grammer_list = json.load(f)
     
-    grammer = grammer_list["3"]
+    for i in range(len(grammer_list)):
 
-    landa_productions(grammer)
-    unit_productions(grammer)
-    useless_productions(grammer)
+        grammer = grammer_list[str(i+1)]
+        print(f"grammer {i+1}:")
+        print("before => " , grammer["P"])
 
-    print(grammer["P"])
-    # for i in range(1,len(grammer_list)+1,1):
-    #     grammer = grammer_list[str(i)]
-        # print(grammer)
+        landa_productions(grammer)
+        unit_productions(grammer)
+        useless_productions(grammer)
+
+        print("after => ",grammer["P"])
+
+        print("\n---------------------------------------------------------\n")
