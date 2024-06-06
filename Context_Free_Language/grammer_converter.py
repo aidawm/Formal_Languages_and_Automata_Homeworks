@@ -2,6 +2,8 @@ import json
 import re
 
 def validate_string(input_string, char_list):
+    if len(char_list) == 0 :
+        return False
     pattern = f"[{''.join(re.escape(char) for char in char_list)}]"
     return bool(re.search(pattern, input_string))
 
@@ -159,19 +161,18 @@ def unit_productions(grammer):
 
 
 
-
-f = open("context_free_grammers.json")
-grammer_list = json.load(f)
-
-grammer = grammer_list["2"]
-# useless_productions(grammer)
-# landa_productions(grammer)
-unit_productions(grammer)
-print(grammer["P"])
-# for i in range(1,len(grammer_list)+1,1):
-#     grammer = grammer_list[str(i)]
-    # print(grammer)
-
-
     
+if __name__ == "__main__":
+    f = open("context_free_grammers.json")
+    grammer_list = json.load(f)
     
+    grammer = grammer_list["3"]
+
+    landa_productions(grammer)
+    unit_productions(grammer)
+    useless_productions(grammer)
+
+    print(grammer["P"])
+    # for i in range(1,len(grammer_list)+1,1):
+    #     grammer = grammer_list[str(i)]
+        # print(grammer)
